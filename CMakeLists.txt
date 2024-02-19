@@ -1,46 +1,58 @@
-cmake_minimum_required(VERSION 3.2.0)
+#cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.16...3.25)
 
 project(semantic_suma)
+
+
+#find_package(OpenGL REQUIRED)
+#find_package(Qt5Gui REQUIRED) 
+#find_package(Qt5OpenGL REQUIRED)
+#find_package(GLEW REQUIRED)
+#find_package(Boost REQUIRED COMPONENTS filesystem system)
+#find_package(GTSAM REQUIRED)
+#find_package(OpenCV REQUIRED)
+#find_package(catkin COMPONENTS glow rangenet_lib)
+
+#catkin_package(
+#  INCLUDE_DIRS src
+#  LIBRARIES suma
+#  CATKIN_DEPENDS
+#    glow
+#    rangenet_lib
+#  DEPENDS
+#    Boost
+#)
+
+#include_directories(${catkin_INCLUDE_DIRS})
+include(external/find_dependencies.cmake)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON) # needs to be activated for qt generated files in build directory.
+set(CMAKE_AUTOMOC ON)
+#set(CMAKE_CXX_FLAGS "-std=c++11 -O3  -Wall ${CMAKE_CXX_FLAGS}")
+#set(CMAKE_CXX_FLAGS "-UDEBUG_GL -UDEBUG -DNDEBUG -g2 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -UDEBUG_GL -UDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-g0 -O3 -DNDEBUG")
 
 find_package(OpenGL REQUIRED)
 find_package(Qt5Gui REQUIRED) 
 find_package(Qt5OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(Boost REQUIRED COMPONENTS filesystem system)
-find_package(GTSAM REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(catkin COMPONENTS glow rangenet_lib)
-
-catkin_package(
-  INCLUDE_DIRS src
-  LIBRARIES suma
-  CATKIN_DEPENDS
-    glow
-    rangenet_lib
-  DEPENDS
-    Boost
-)
-
-include_directories(${catkin_INCLUDE_DIRS})
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON) # needs to be activated for qt generated files in build directory.
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_CXX_FLAGS "-std=c++11 -O3  -Wall ${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-UDEBUG_GL -UDEBUG -DNDEBUG -g2 ${CMAKE_CXX_FLAGS}")
-
+find_package(Boost REQUIRED COMPONENTS filesystem system timer date_time)
+find_package(Eigen3 REQUIRED)
 
 # since now everything resides in "bin", we have to copy some stuff.
   
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-include_directories(
-    ${QT5_INCLUDE_DIRS}
-    ${GLEW_INCLUDE_DIRS}
-    ${GTSAM_INCLUDE_DIRS}
-    /usr/include/eigen3
-    ${rangenet_lib_INCLUDE_DIRS}
-    ${TENSORRT_INCLUDE_DIRS}
-    )
+#include_directories(
+#    ${QT5_INCLUDE_DIRS}
+#    ${GLEW_INCLUDE_DIRS}
+#    ${GTSAM_INCLUDE_DIRS}
+#    /usr/include/eigen3
+#    ${rangenet_lib_INCLUDE_DIRS}
+#    ${TENSORRT_INCLUDE_DIRS}
+#    )
 include_directories(src/)
 
 option(ENABLE_NVIDIA_EXT "Enable Nvidia GL capabilites." OFF)
@@ -190,6 +202,6 @@ add_executable(visualizer
   src/visualizer/visualizer.cpp
   )
 
-target_link_libraries(robovision ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${rangenet_lib_LIBRARIES} gtsam pthread)
-target_link_libraries(suma ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${rangenet_lib_LIBRARIES} gtsam pthread robovision)
-target_link_libraries(visualizer suma ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES}  gtsam  pthread robovision Qt5::OpenGL Qt5::Widgets ${OpenCV_LIBS})
+target_link_libraries(robovision ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${rangenet_lib_LIBRARIES} gtsam glow pthread)
+target_link_libraries(suma ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${rangenet_lib_LIBRARIES} gtsam glow pthread robovision)
+target_link_libraries(visualizer suma ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES}  gtsam  glow pthread robovision Qt5::OpenGL Qt5::Widgets ${OpenCV_LIBS})
